@@ -60,6 +60,7 @@ app.get('/v1/models', (req, res) => {
 app.post('/v1/chat/completions', async (req, res) => {
   try {
     const { model, messages, temperature, max_tokens, stream } = req.body;
+    console.log('Incoming model from JanitorAI:', model);
     
     // Smart model selection with fallback
     let nimModel = MODEL_MAPPING[model];
@@ -90,7 +91,7 @@ app.post('/v1/chat/completions', async (req, res) => {
         }
       }
     }
-    
+   console.log('Mapped to NIM model:', nimModel);
     // Transform OpenAI request to NIM format
    const nimRequest = {
     model: nimModel,
@@ -218,13 +219,15 @@ app.post('/v1/chat/completions', async (req, res) => {
     }
     
   } catch (error) {
-    console.error('Proxy error:', error.message);
-    
-    res.status(error.response?.status || 500).json({
-      error: {
-        message: error.message || 'Internal server error',
-        type: 'invalid_request_error',
-        code: error.response?.status || 500
+  console.error('Proxy error message:', error.message);
+  console.error('NIM status:', error.response?.status);
+  console.error('NIM error body:', JSON.stringify(error.response?.data, null, 2));
+
+  res.status(error.response?.status || 500).json({
+    error: {
+      message: error.response?.data?.error?.message || error.message || 'Internal server error',
+      type: 'invalid_request_error',
+      code: error.response?.status || 500
       }
     });
   }
