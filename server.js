@@ -218,10 +218,19 @@ app.post('/v1/chat/completions', async (req, res) => {
       res.json(openaiResponse);
     }
     
-  } catch (error) {
+    } catch (error) {
   console.error('Proxy error message:', error.message);
   console.error('NIM status:', error.response?.status);
-  console.error('NIM error body:', error.response?.data);
+
+  if (error.response?.data && typeof error.response.data.on === 'function') {
+    let errBody = '';
+    error.response.data.on('data', chunk => errBody += chunk.toString());
+    error.response.data.on('end', () => {
+      console.error('NIM error body (stream):', errBody);
+    });
+  } else {
+    console.error('NIM error body:', error.response?.data);
+  }
 
   res.status(error.response?.status || 500).json({
     error: {
