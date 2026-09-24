@@ -28,7 +28,7 @@ const MODEL_MAPPING = {
   'claude-3-opus': 'minimaxai/minimax-m3',    
   'gpt-4-turbo': 'moonshotai/kimi-k3',
   'claude-3-sonnet': 'z-ai/glm-5.3-flash',
-  'gemini-pro': 'deepseek-ai/deepseek-v4-flash' 
+  'gemini-pro': 'deepseek-ai/deepseek-v4.1-flash' 
 };
 
 // Health check endpoint
